@@ -110,6 +110,10 @@ void FocusSerial::printBool(bool b) {
   Runtime.serialPort().print((b) ? F("true") : F("false"));
 }
 
+long FocusSerial::parseInt() {
+  return Runtime.serialPort().parseInt();
+}
+
 bool FocusSerial::inputMatchesHelp(const char *input) {
   return inputMatchesCommand(input, PSTR("help"));
 }

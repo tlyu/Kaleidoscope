@@ -48,23 +48,23 @@ class FocusSerial : public kaleidoscope::Plugin {
 
 #ifndef NDEPRECATED
   DEPRECATED(FOCUS_HANDLEHELP)
-  bool handleHelp(const char *input, const char *help_message);
+  static bool handleHelp(const char *input, const char *help_message);
 #endif
 
-  bool inputMatchesHelp(const char *input);
-  bool inputMatchesCommand(const char *input, const char *expected);
+  static bool inputMatchesHelp(const char *input);
+  static bool inputMatchesCommand(const char *input, const char *expected);
 
-  EventHandlerResult printHelp() {
+  static EventHandlerResult printHelp() {
     return EventHandlerResult::OK;
   }
   template<typename... Vars>
-  EventHandlerResult printHelp(const char *h1, Vars... vars) {
+  static EventHandlerResult printHelp(const char *h1, Vars... vars) {
     Runtime.serialPort().println((const __FlashStringHelper *)h1);
     delayAfterPrint();
     return printHelp(vars...);
   }
 
-  EventHandlerResult sendName(const __FlashStringHelper *name) {
+  static EventHandlerResult sendName(const __FlashStringHelper *name) {
     Runtime.serialPort().print(name);
     delayAfterPrint();
     Runtime.serialPort().println();
@@ -72,63 +72,63 @@ class FocusSerial : public kaleidoscope::Plugin {
     return EventHandlerResult::OK;
   }
 
-  void send() {}
-  void send(const cRGB color) {
+  static void send() {}
+  static void send(const cRGB color) {
     send(color.r, color.g, color.b);
   }
-  void send(const Key key) {
+  static void send(const Key key) {
     send(key.getRaw());
   }
-  void send(const bool b) {
+  static void send(const bool b) {
     printBool(b);
     delayAfterPrint();
     Runtime.serialPort().print(SEPARATOR);
     delayAfterPrint();
   }
   template<typename V>
-  void send(V v) {
+  static void send(V v) {
     Runtime.serialPort().print(v);
     delayAfterPrint();
     Runtime.serialPort().print(SEPARATOR);
     delayAfterPrint();
   }
   template<typename Var, typename... Vars>
-  void send(Var v, Vars... vars) {
+  static void send(Var v, Vars... vars) {
     send(v);
     send(vars...);
   }
 
-  void sendRaw() {}
+  static void sendRaw() {}
   template<typename Var, typename... Vars>
-  void sendRaw(Var v, Vars... vars) {
+  static void sendRaw(Var v, Vars... vars) {
     Runtime.serialPort().print(v);
     delayAfterPrint();
     sendRaw(vars...);
   }
 
-  const char peek() {
+  static const char peek() {
     return Runtime.serialPort().peek();
   }
 
-  void read(Key &key) {
-    key.setRaw(Runtime.serialPort().parseInt());
+  static void read(Key &key) {
+    key.setRaw(parseInt());
   }
-  void read(cRGB &color) {
-    color.r = Runtime.serialPort().parseInt();
-    color.g = Runtime.serialPort().parseInt();
-    color.b = Runtime.serialPort().parseInt();
+  static void read(cRGB &color) {
+    color.r = parseInt();
+    color.g = parseInt();
+    color.b = parseInt();
   }
-  void read(char &c) {
+  static void read(char &c) {
     Runtime.serialPort().readBytes(&c, 1);
   }
-  void read(uint8_t &u8) {
-    u8 = Runtime.serialPort().parseInt();
+  static void read(uint8_t &u8) {
+    u8 = parseInt();
   }
-  void read(uint16_t &u16) {
-    u16 = Runtime.serialPort().parseInt();
+  static void read(uint16_t &u16) {
+    u16 = parseInt();
   }
 
-  bool isEOL();
+  static bool isEOL();
 
   /* Hooks */
   EventHandlerResult afterEachCycle();
@@ -137,13 +137,14 @@ class FocusSerial : public kaleidoscope::Plugin {
  private:
   char input_[32];
   uint8_t buf_cursor_ = 0;
-  void printBool(bool b);
+  static void printBool(bool b);
+  static long parseInt();
 
   // This is a hacky workaround for the host seemingly dropping characters
   // when a client spams its serial port too quickly
   // Verified on GD32 and macOS 12.3 2022-03-29
   static constexpr uint8_t focus_delay_us_after_character_ = 100;
-  void delayAfterPrint() { delayMicroseconds(focus_delay_us_after_character_); }
+  static void delayAfterPrint() { delayMicroseconds(focus_delay_us_after_character_); }
 };
 
 }  // namespace plugin
