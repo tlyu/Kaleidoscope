@@ -66,6 +66,7 @@ void Runtime_::loop(void) {
   millis_at_cycle_start_ = millis();
 
   kaleidoscope::Hooks::beforeEachCycle();
+  device().hid().keyboard().checkReset();
 
   // Next, we scan the keyswitches. Any toggle-on or toggle-off events will
   // trigger a call to `handleKeyswitchEvent()`, which in turn will
