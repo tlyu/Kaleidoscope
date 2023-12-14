@@ -30,8 +30,10 @@ jobs:
     - run: sudo apt update 
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: test-nonparallel
     - run: make setup
-    - run: KALEIDOSCOPE_CCACHE=1 make -j $(nproc) --output-sync=recurse simulator-tests
+    - run: KALEIDOSCOPE_CCACHE=1 make simulator-tests
   check-code-style:
     runs-on: ubuntu-latest
     steps:
