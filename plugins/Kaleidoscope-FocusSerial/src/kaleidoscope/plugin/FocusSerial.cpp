@@ -81,6 +81,7 @@ EventHandlerResult FocusSerial::onFocusEvent(const char *input) {
   const char *cmd_help    = PSTR("help");
   const char *cmd_reset   = PSTR("device.reset");
   const char *cmd_plugins = PSTR("plugins");
+  const char *cmd_bytes   = PSTR("sendbytes");
 
   if (inputMatchesHelp(input))
     return printHelp(cmd_help, cmd_reset, cmd_plugins);
@@ -93,7 +94,17 @@ EventHandlerResult FocusSerial::onFocusEvent(const char *input) {
     kaleidoscope::Hooks::onNameQuery();
     return EventHandlerResult::EVENT_CONSUMED;
   }
-
+  if (inputMatchesCommand(input, cmd_bytes)) {
+    uint8_t buf[64];
+    uint16_t n;
+    read(n);
+    memset(buf, 'A', sizeof(buf));
+    while (n > 0) {
+      size_t wrote = Runtime.serialPort().write(buf, min(sizeof(buf), n));
+      n -= wrote;
+    }
+    return EventHandlerResult::EVENT_CONSUMED;
+  }
   return EventHandlerResult::OK;
 }
 
